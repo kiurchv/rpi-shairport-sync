@@ -1,4 +1,4 @@
-# HMCFGUSB
+# shairport-sync
 
 Dockerized version of shairport-sync. Take a look at https://github.com/mikebrady/shairport-sync.
 

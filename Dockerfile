@@ -1,5 +1,6 @@
 # Shairport Sync docker
-FROM alpine:3.2
+#FROM alpine:3.2
+FROM hypriot:rpi-alpine-scratch:v3.2
 MAINTAINER Patrick Sernetz <patrick@sernetz.com>
 
 ARG SHAIRPORT_VERSION=2.8.0

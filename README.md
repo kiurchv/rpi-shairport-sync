@@ -15,7 +15,7 @@ docker build --build-arg SHAIRPORT_VERSION=2.8.0 -t patrickse/rpi-shairport-sync
 # Run
 
 ```bash
-docker run -p 5000:5000 -v /etc/localtime:/etc/localtime:ro -v /var/run/dbus:/var/run/dbus --net host -privileged patrickse/rpi-shairport-sync:2.8.1 
+docker run --rm -ti --net host -e name=Küche -v /var/run/dbus:/var/run/dbus --privileged  patrickse/rpi-shairport-sync:2.8.1 
 ```
 
 # Compose
@@ -25,11 +25,10 @@ docker run -p 5000:5000 -v /etc/localtime:/etc/localtime:ro -v /var/run/dbus:/va
     restart: always
     image: patrickse/rpi-shairport-sync:2.8.1
     network_mode: host
-    ports:
-      - 5000:5000
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/dbus:/var/run/dbus
-    command: shairport-sync -v -a Küche
+    environment:
+      - name="Küche"
     privileged: true
 ```

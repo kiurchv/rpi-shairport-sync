@@ -2,7 +2,7 @@
 FROM hypriot/rpi-alpine-scratch:v3.2
 MAINTAINER Patrick Sernetz <patrick@sernetz.com>
 
-ARG SHAIRPORT_VERSION=2.8.0
+ARG SHAIRPORT_VERSION=2.8.1
 
 RUN apk add --update \
         build-base \
@@ -43,6 +43,6 @@ RUN apk add --update \
         alsa-lib-dev \
         avahi-dev \
         openssl-dev \
-        soxr-dev #\
+        soxr-dev
   
-CMD ["shairport-sync", "-v", "$name"]  
+CMD shairport-sync -v -a $name

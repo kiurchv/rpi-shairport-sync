@@ -32,3 +32,8 @@ docker run --rm -ti --net host -e name=Küche -v /var/run/dbus:/var/run/dbus --p
       - name="Küche"
     privileged: true
 ```
+
+# TODO 
+
+ - Expose the configuration file
+ - ...

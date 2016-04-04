@@ -1,6 +1,5 @@
 # Shairport Sync docker
-#FROM alpine:3.2
-FROM hypriot:rpi-alpine-scratch:v3.2
+FROM hypriot/rpi-alpine-scratch:v3.2
 MAINTAINER Patrick Sernetz <patrick@sernetz.com>
 
 ARG SHAIRPORT_VERSION=2.8.0
@@ -46,8 +45,4 @@ RUN apk add --update \
         openssl-dev \
         soxr-dev #\
   
-  # Not needed anymore?
-  #&& getent group shairport-sync &>/dev/null || groupadd -r shairport-sync >/dev/null \
-  #&& getent passwd shairport-sync &> /dev/null || useradd -r -M -g shairport-sync -s /usr/bin/nologin -G audio shairport-sync >/dev/null
-
-CMD ["shairport-sync"]  
+CMD ["shairport-sync", "-v", "$name"]  

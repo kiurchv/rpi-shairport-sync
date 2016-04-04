@@ -1,31 +1,52 @@
-FROM resin/rpi-raspbian:jessie
+# Shairport Sync docker
+FROM alpine:3.2
+MAINTAINER Patrick Sernetz <patrick@sernetz.com>
 
-RUN apt-get update -y \
-	&& apt-get install -y \
-		build-essential git autoconf automake libtool \
-		libdaemon-dev libasound2-dev libpopt-dev \
-		libconfig-dev avahi-daemon libavahi-client-dev \
-		libssl-dev libsoxr-dev
-RUN apt-get install -y wget
+ARG SHAIRPORT_VERSION=2.8.0
 
-RUN wget --no-check-certificate      https://github.com/mikebrady/shairport-sync/archive/2.8.0.tar.gz
-RUN tar xzvf 2.8.0.tar.gz 
-RUN mv shairport-sync-2.8.0/ /tmp/shairport-sync
+RUN apk add --update \
+        build-base \
+        autoconf \
+        automake \
+        libdaemon libdaemon-dev \
+        popt popt-dev \
+        libconfig libconfig-dev \
+        alsa-lib alsa-lib-dev \
+        avahi-libs avahi-dev \
+        openssl openssl-dev \
+        soxr soxr-dev \
+    && rm -rf /var/cache/apk/* \
 
-WORKDIR /tmp/shairport-sync
+    && wget https://github.com/mikebrady/shairport-sync/archive/$SHAIRPORT_VERSION.tar.gz -P /tmp \
+      && tar -xzf /tmp/$SHAIRPORT_VERSION.tar.gz -C /tmp \
+      && rm /tmp/$SHAIRPORT_VERSION.tar.gz \
+      && cd /tmp/shairport-sync-$SHAIRPORT_VERSION \
 
-RUN autoreconf -i -f 
-RUN ./configure --with-alsa \
-		--with-avahi \
-		--with-ssl=openssl \
-		--with-soxr \
-		--with-metadata \
-		--with-systemd
+    && cd /tmp/shairport-sync-$SHAIRPORT_VERSION \
+    && autoreconf -i -f  \
+    && ./configure --with-alsa \
+  		--with-avahi \
+  		--with-ssl=openssl \
+  		--with-soxr \
+  		--with-metadata \
+    	
+    && make \
+    && make install \
+    && rm -R -f /tmp/shairport-sync-$SHAIRPORT_VERSION \
+    && apk del \ 
+        build-base \
+        autoconf \
+        automake \
+        libdaemon-dev \
+        popt-dev \
+        libconfig-dev \
+        alsa-lib-dev \
+        avahi-dev \
+        openssl-dev \
+        soxr-dev #\
+  
+  # Not needed anymore?
+  #&& getent group shairport-sync &>/dev/null || groupadd -r shairport-sync >/dev/null \
+  #&& getent passwd shairport-sync &> /dev/null || useradd -r -M -g shairport-sync -s /usr/bin/nologin -G audio shairport-sync >/dev/null
 
-RUN  make 
-RUN  make install
-
-RUN getent group shairport-sync &>/dev/null || sudo groupadd -r shairport-sync >/dev/null
-RUN getent passwd shairport-sync &> /dev/null || sudo useradd -r -M -g shairport-sync -s /usr/bin/nologin -G audio shairport-sync >/dev/null
-
-RUN systemctl enable shairport-sync
+CMD ["shairport-sync"]  
